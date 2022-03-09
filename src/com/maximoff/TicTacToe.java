@@ -1,5 +1,9 @@
 package com.maximoff;
 
+/*
+    Класс для игры крестики-нолики 3x3
+ */
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
