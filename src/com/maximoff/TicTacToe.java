@@ -404,12 +404,13 @@ public class TicTacToe {
 
                     // Проверка того, завершена ли игра
                     if (game.checkGameFinish(matrix, current_player_mark, current_player)) {
+                        ScoreFile scoreFile = new ScoreFile(path, current_player);
                         game.displayBoard(matrix);
                         if (!game.fullBoardCheck(matrix)) {
-                            ScoreFile scoreFile = new ScoreFile(path, current_player);
                             scoreFile.addScore();
                         }
                         if(!game.replay()) {
+                            scoreFile.showScore();
                             break;
                         } else {
                             players.remove(player_name1);
@@ -496,12 +497,13 @@ public class TicTacToe {
 
                     // Проверка того, завершена ли игра
                     if (game.checkGameFinish(matrix, current_player_mark, current_player)) {
+                        ScoreFile scoreFile = new ScoreFile(path, current_player);
                         game.displayBoard(matrix);
                         if (!game.fullBoardCheck(matrix)) {
-                            ScoreFile scoreFile = new ScoreFile(path, current_player);
                             scoreFile.addScore();
                         }
                         if(!game.replay()) {
+                            scoreFile.showScore();
                             break;
                         } else {
                             players.remove(player_name1);
