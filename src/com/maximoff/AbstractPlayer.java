@@ -12,6 +12,9 @@ public abstract class AbstractPlayer {
     private  String player_name;
     private  int player_id;
 
+    public AbstractPlayer() {
+    }
+
     public AbstractPlayer(String player_name, String player_mark, int player_id) {
         this.player_name = player_name;
         this.player_mark = player_mark;
@@ -22,8 +25,16 @@ public abstract class AbstractPlayer {
         return player_name;
     }
 
+    public void setPlayerName(String player_name) {
+        this.player_name = player_name;
+    }
+
     public String getPlayerMark() {
         return player_mark;
+    }
+
+    public void setPlayerMark(String player_mark) {
+        this.player_mark = player_mark;
     }
 
     public int getPlayerID() {

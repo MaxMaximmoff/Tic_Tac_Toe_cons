@@ -1,4 +1,4 @@
+q 16
 Max 13
-q 12
 Bot 6
 Vova 3

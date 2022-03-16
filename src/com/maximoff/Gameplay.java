@@ -13,7 +13,6 @@ public class Gameplay {
     private Player winner;
     private ArrayList<Step> steps;
 
-    public Gameplay() {};
 
     public Gameplay(ArrayList<Player> players) {
         this.player1 = players.get(0);

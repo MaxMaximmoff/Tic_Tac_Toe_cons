@@ -7,6 +7,7 @@ import java.util.Random;
 
 public class Player extends AbstractPlayer {
 
+    public Player(){}
 
     public Player(String player_name, String player_mark, int player_id) {
         super(player_name, player_mark, player_id);

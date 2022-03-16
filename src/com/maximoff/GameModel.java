@@ -48,8 +48,10 @@ public class GameModel {
         String mode = "";
 
         while (!mode.equals("1") && !mode.equals("2")) {
-            GameView.displayMessage("Введите с кем вы хотите играть.\n");
-            GameView.displayMessage("С человеком - 1, с ботом - 2: ");
+            GameView.displayMessage("Задайте режим игры.\n");
+            GameView.displayMessage("Игра с человеком. Введите - 1.\n");
+            GameView.displayMessage("Игра с ботом. Введите - 2.\n");
+            GameView.displayMessage("Введите число: ");
             mode = b.readLine().toUpperCase();
             if (!mode.equals("1") && !mode.equals("2")) {
                 GameView.displayMessage("Вы ввели некорректное значение!\n");
@@ -312,4 +314,8 @@ public class GameModel {
         return diagonal;
     }
 
+    public void playLastGame(String pathXML) throws IOException {
+
+
+    }
 }

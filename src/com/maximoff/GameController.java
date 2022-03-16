@@ -28,8 +28,58 @@ public class GameController {
         Player current_player;
         XmlWriter xmlWriter;
 
+        String decision = "";
+        Scanner sc = new Scanner(System.in);
+
+        while(!decision.equals("y") && !decision.equals("n")){
+            gameView.displayMessage("\nВы бы хотели воспроизвести последнюю игру из XML?\n");
+            gameView.displayMessage("Напишите \"y\" или \"n\": ");
+            decision = sc.nextLine().toLowerCase();
+            System.out.println();
+            if (!decision.equals("y") && !decision.equals("n")) {
+                gameView.displayMessage("Вы ввели некорректное значение!\n");
+            }
+        }
+        if(decision.equals("y")) {
+            XmlParser xmlParser = new XmlParser();
+            List<Player> playersXml = xmlParser.readPlayers(pathXML);
+            List<Step> steps = xmlParser.readSteps(pathXML);
+
+            gameView.displayMessage("\nPlayer " + playersXml.get(0).getPlayerID() + " -> "
+                    + playersXml.get(0).getPlayerName() + " is Player1 as \'"
+                    + playersXml.get(0).getPlayerMark() + "\'!\n");
+            gameView.displayMessage("Player " + playersXml.get(1).getPlayerID() + " -> "
+                    + playersXml.get(1).getPlayerName() + " is Player2 as \'"
+                    + playersXml.get(1).getPlayerMark() + "\'!\n\n");
+
+            for (Step step : steps) {
+                gameView.displayBoard(gameModel.getMatrix());
+                if (step.getPlayerId() == playersXml.get(0).getPlayerID()) {
+                    gameModel.placeMarker(playersXml.get(0).getPlayerMark(),
+                            StepValueAdapter.reversTransfer(step.getStepValue()));
+                    gameView.displayMessage(String.format("\tХод игрока %s\n\n", playersXml.get(0).getPlayerName()));
+                } else {
+                    gameModel.placeMarker(playersXml.get(1).getPlayerMark(),
+                            StepValueAdapter.reversTransfer(step.getStepValue()));
+                    gameView.displayMessage(String.format("\tХод игрока %s\n\n", playersXml.get(1).getPlayerName()));
+                }
+            }
+
+            gameView.displayBoard(gameModel.getMatrix());
+
+
+            gameView.displayMessage("\n\n\tPlayer " + playersXml.get(2).getPlayerID() + " -> "
+                    + playersXml.get(2).getPlayerName() + " is winner as "
+                    + "\'" + playersXml.get(2).getPlayerMark().toLowerCase() + "\'!\n\n");
+
+
+        }
+
+
+
         int mode = gameModel.modeInput();
 
+        gameModel.setMatrix(gameModel.makeMatrix());
         // Список игроков с случайно выбранным первым игроком
         ArrayList<Player> players = gameModel.chooseFirst((ArrayList<Player>) gameModel.gameInit(mode));
         // Игрок который будет начинать игру
@@ -78,7 +128,6 @@ public class GameController {
 
                 }
             }
-
             // Проверка завершена ли игра
             if (gameModel.checkGameFinish(current_player)) {
                 ScoreFile scoreFile = new ScoreFile(path, current_player.getPlayerName());
@@ -125,6 +174,8 @@ public class GameController {
             GameView.clearScreen();
 
         }
+
+
     }
 }
 
