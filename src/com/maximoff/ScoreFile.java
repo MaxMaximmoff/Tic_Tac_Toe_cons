@@ -2,7 +2,7 @@ package com.maximoff;
 
 /*
     Класс для записи рейтинга игроков в фаил в игре крестики-нолики
- */
+*/
 
 import java.io.*;
 import java.util.*;
