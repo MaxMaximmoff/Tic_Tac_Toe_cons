@@ -1,6 +1,10 @@
 package com.maximoff;
 
-import java.io.IOException;
+/*
+    Класс для запуска игры
+*/
+
+import java.io.*;
 
 
 public class Main {
