@@ -10,10 +10,16 @@ public class Main {
 
     public static void main(String[] args) throws Exception, FileNotFoundException, IOException {
 
-        GameController gameController = new GameController(
-                                             new GameModel(), new GameView());
+        try {
+            GameController gameController = new GameController(
+                    new GameModel(), new GameView());
 
-        gameController.play();
+            gameController.play();
+        }
+        catch (IndexOutOfBoundsException e) {
+            e.printStackTrace();
+            System.out.println("Ошибка!");
+        }
 
 
     }

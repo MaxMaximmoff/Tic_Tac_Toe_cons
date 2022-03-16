@@ -35,7 +35,7 @@ public class GameController {
             gameView.displayMessage("\nВы бы хотели воспроизвести последнюю игру из XML?\n");
             gameView.displayMessage("Напишите \"y\" или \"n\": ");
             decision = sc.nextLine().toLowerCase();
-            System.out.println();
+            gameView.displayMessage("\n");
             if (!decision.equals("y") && !decision.equals("n")) {
                 gameView.displayMessage("Вы ввели некорректное значение!\n");
             }
@@ -43,6 +43,8 @@ public class GameController {
         if(decision.equals("y")) {
             XmlParser xmlParser = new XmlParser();
             List<Player> playersXml = xmlParser.readPlayers(pathXML);
+
+
             List<Step> steps = xmlParser.readSteps(pathXML);
 
             gameView.displayMessage("\nPlayer " + playersXml.get(0).getPlayerID() + " -> "
@@ -54,28 +56,34 @@ public class GameController {
 
             for (Step step : steps) {
                 gameView.displayBoard(gameModel.getMatrix());
+                gameView.displayMessage("\n");
                 if (step.getPlayerId() == playersXml.get(0).getPlayerID()) {
                     gameModel.placeMarker(playersXml.get(0).getPlayerMark(),
                             StepValueAdapter.reversTransfer(step.getStepValue()));
-                    gameView.displayMessage(String.format("\tХод игрока %s\n\n", playersXml.get(0).getPlayerName()));
+                    gameView.displayMessage(String.format("\nХод игрока %s (играет за %s)\n",
+                                                                playersXml.get(0).getPlayerName(),
+                                                                playersXml.get(0).getPlayerMark()));
                 } else {
                     gameModel.placeMarker(playersXml.get(1).getPlayerMark(),
                             StepValueAdapter.reversTransfer(step.getStepValue()));
-                    gameView.displayMessage(String.format("\tХод игрока %s\n\n", playersXml.get(1).getPlayerName()));
+                    gameView.displayMessage(String.format("\nХод игрока %s (играет за %s)\n",
+                                                                playersXml.get(1).getPlayerName(),
+                                                                playersXml.get(1).getPlayerMark()));
                 }
             }
 
             gameView.displayBoard(gameModel.getMatrix());
 
 
-            gameView.displayMessage("\n\n\tPlayer " + playersXml.get(2).getPlayerID() + " -> "
-                    + playersXml.get(2).getPlayerName() + " is winner as "
-                    + "\'" + playersXml.get(2).getPlayerMark().toLowerCase() + "\'!\n\n");
-
+            if (playersXml.size()==2) {
+                gameView.displayMessage("\n\tDraw! - Ничья!\n\n");
+            }else {
+                gameView.displayMessage("\n\tPlayer " + playersXml.get(2).getPlayerID() + " -> "
+                        + playersXml.get(2).getPlayerName() + " is winner as "
+                        + "\'" + playersXml.get(2).getPlayerMark() + "\'!\n\n");
+            }
 
         }
-
-
 
         int mode = gameModel.modeInput();
 
@@ -174,8 +182,6 @@ public class GameController {
             GameView.clearScreen();
 
         }
-
-
     }
 }
 

@@ -10,6 +10,8 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
+import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -28,8 +30,6 @@ public class XmlParser {
     static final String ID = "id";
     static final String NAME = "name";
     static final String SYMBOL = "symbol";
-
-
 
     @SuppressWarnings({"unchecked", "null"})
 
@@ -86,120 +86,51 @@ public class XmlParser {
     }
 
     public List readPlayers(String gameplayFile) {
-        List players = new ArrayList();
-
+        List<Player> players = new ArrayList<>();
+        Player player = null;
+        XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
         try {
-            // First, create a new XMLInputFactory
-            XMLInputFactory inputFactory = XMLInputFactory.newInstance();
-            // Setup a new eventReader
-            InputStream in = new FileInputStream(gameplayFile);
-            XMLEventReader eventReader = inputFactory.createXMLEventReader(in);
-            // read the XML document
-            Player player =  null;
-            while (eventReader.hasNext()) {
-                XMLEvent event = eventReader.nextEvent();
-                if (event.isStartElement()) {
-                    StartElement startElement = event.asStartElement();
-                    // Ищем необходимый элемент
-                    if (startElement.getName().getLocalPart().equals(PLAYER)) {
-                        player =  new Player();
-                        // Читаем атрибуты из этого тэга и записываем в объект
-                        Iterator attributes = startElement
-                                .getAttributes();
-                        while (attributes.hasNext()) {
-                            Attribute attribute = (Attribute) attributes.next();
-                            if (attribute.getName().toString().equals(ID)) {
-                                player.setPlayerID(Integer.parseInt(attribute.getValue()));
-                            }
-                            if (attribute.getName().toString().equals(NAME)) {
-                                player.setPlayerName(attribute.getValue());
-                            }
-                            if (attribute.getName().toString().equals(SYMBOL)) {
-                                player.setPlayerMark(attribute.getValue());
-                            }
+            // инициализируем reader и скармливаем ему xml файл
+            XMLEventReader reader = xmlInputFactory.createXMLEventReader(new FileInputStream(gameplayFile));
+            // проходим по всем элементам xml файла
+            while (reader.hasNext()) {
+                // получаем событие (элемент) и разбираем его по атрибутам
+                XMLEvent xmlEvent = reader.nextEvent();
+                if (xmlEvent.isStartElement()) {
+                    StartElement startElement = xmlEvent.asStartElement();
+                    if (startElement.getName().getLocalPart().equals("Player")) {
+                        player = new Player();
+                        // Получаем атрибут id для каждого элемента Player
+                        Attribute idAttr = startElement.getAttributeByName(new QName("id"));
+                        if (idAttr != null) {
+                            player.setPlayerID(Integer.parseInt(idAttr.getValue()));
                         }
-                        continue;
+                        Attribute nameAttr = startElement.getAttributeByName(new QName("name"));
+                        if (!nameAttr.equals(null)) {
+                            player.setPlayerName(nameAttr.getValue());
+                        }
+                        Attribute symbolAttr = startElement.getAttributeByName(new QName("symbol"));
+                        if (!nameAttr.equals(null)) {
+                            player.setPlayerMark(symbolAttr.getValue());
+                        }
                     }
 
-
                 }
-                if (event.isEndElement()) {
-                    EndElement endElement = event.asEndElement();
-                    if (endElement.getName().getLocalPart().equals(PLAYER)) {
+                // если цикл дошел до закрывающего элемента Player,
+                // то добавляем считанного из файла player в список
+                if (xmlEvent.isEndElement()) {
+                    EndElement endElement = xmlEvent.asEndElement();
+                    if (endElement.getName().getLocalPart().equals("Player")) {
                         players.add(player);
                     }
+
                 }
+
             }
-        } catch (FileNotFoundException e) {
-//            e.printStackTrace();
-            System.out.println("Ошибка! Файл не найден!");
-        } catch (XMLStreamException e) {
-            e.printStackTrace();
+
+        } catch (FileNotFoundException | XMLStreamException exc) {
+        exc.printStackTrace();
         }
         return players;
     }
 }
-
-
-
-
-
-//                if (event.isStartElement()) {
-//                    StartElement startElement = event.asStartElement();
-//                    // If we have an item element, we create a new item
-//                    if (startElement.getName().getLocalPart().equals(ITEM)) {
-//                        item = new Item();
-//                        // We read the attributes from this tag and add the date
-//                        // attribute to our object
-//                        Iterator attributes = startElement
-//                                .getAttributes();
-//                        while (attributes.hasNext()) {
-//                            Attribute attribute = (Attribute) attributes.next();
-//                            if (attribute.getName().toString().equals(DATE)) {
-//                                item.setDate(attribute.getValue());
-//                            }
-//                        }
-//                    }
-//                    if (event.isStartElement()) {
-//                        if (event.asStartElement().getName().getLocalPart()
-//                                .equals(MODE)) {
-//                            event = eventReader.nextEvent();
-//                            item.setMode(event.asCharacters().getData());
-//                            continue;
-//                        }
-//                    }
-//                    if (event.asStartElement().getName().getLocalPart()
-//                            .equals(UNIT)) {
-//                        event = eventReader.nextEvent();
-//                        item.setUnit(event.asCharacters().getData());
-//                        continue;
-//                    }
-//                    if (event.asStartElement().getName().getLocalPart()
-//                            .equals(CURRENT)) {
-//                        event = eventReader.nextEvent();
-//                        item.setCurrent(event.asCharacters().getData());
-//                        continue;
-//                    }
-//                    if (event.asStartElement().getName().getLocalPart()
-//                            .equals(INTERACTIVE)) {
-//                        event = eventReader.nextEvent();
-//                        item.setInteractive(event.asCharacters().getData());
-//                        continue;
-//                    }
-//                }
-//                // If we reach the end of an item element, we add it to the list
-//                if (event.isEndElement()) {
-//                    EndElement endElement = event.asEndElement();
-//                    if (endElement.getName().getLocalPart().equals(ITEM)) {
-//                        items.add(item);
-//                    }
-//                }
-//            }
-//        } catch (FileNotFoundException e) {
-//            e.printStackTrace();
-//        } catch (XMLStreamException e) {
-//            e.printStackTrace();
-//        }
-//        return items;
-//    }
-//}
