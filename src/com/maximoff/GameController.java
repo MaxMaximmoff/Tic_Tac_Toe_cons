@@ -28,8 +28,11 @@ public class GameController {
         Player current_player;
         XmlWriter xmlWriter;
 
+        // Предварительное проигрывание ходов записанных в XML
         String decision = "";
         Scanner sc = new Scanner(System.in);
+
+        gameModel.setMatrix(gameModel.makeNamberMatrix());
 
         while(!decision.equals("y") && !decision.equals("n")){
             gameView.displayMessage("\nВы бы хотели воспроизвести последнюю игру из XML?\n");
@@ -43,7 +46,6 @@ public class GameController {
         if(decision.equals("y")) {
             XmlParser xmlParser = new XmlParser();
             List<Player> playersXml = xmlParser.readPlayers(pathXML);
-
 
             List<Step> steps = xmlParser.readSteps(pathXML);
 
@@ -60,15 +62,17 @@ public class GameController {
                 if (step.getPlayerId() == playersXml.get(0).getPlayerID()) {
                     gameModel.placeMarker(playersXml.get(0).getPlayerMark(),
                             StepValueAdapter.reversTransfer(step.getStepValue()));
-                    gameView.displayMessage(String.format("\nХод игрока %s (играет за %s)\n",
+                    gameView.displayMessage(String.format("\nХод игрока %s (играет за %s) ход - %d\n",
                                                                 playersXml.get(0).getPlayerName(),
-                                                                playersXml.get(0).getPlayerMark()));
+                                                                playersXml.get(0).getPlayerMark(),
+                                                                step.getStepValue()));
                 } else {
                     gameModel.placeMarker(playersXml.get(1).getPlayerMark(),
                             StepValueAdapter.reversTransfer(step.getStepValue()));
-                    gameView.displayMessage(String.format("\nХод игрока %s (играет за %s)\n",
+                    gameView.displayMessage(String.format("\nХод игрока %s (играет за %s) ход - %d\n",
                                                                 playersXml.get(1).getPlayerName(),
-                                                                playersXml.get(1).getPlayerMark()));
+                                                                playersXml.get(1).getPlayerMark(),
+                                                                step.getStepValue()));
                 }
             }
 

@@ -32,6 +32,22 @@ public class GameModel {
         return matrix;
     }
 
+    // Создание двумерной матрицы 3х3 c заполненными цифрами 1-9
+    public String[][] makeNamberMatrix() {
+
+        String[][] matrix = new String[3][3];
+        int i = 1;
+        for (int row=0; row<3; row++) {
+            for (int col=0; col<3; col++) {
+                if (matrix[row][col]==null) {
+                    matrix[row][col] = Integer.toString(i);
+                }
+                i++;
+            }
+        }
+        return matrix;
+    }
+
     public static String[][] getMatrix(){
         return matrix;
     }
