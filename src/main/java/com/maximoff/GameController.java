@@ -28,36 +28,11 @@ public class GameController {
         // Переменная текущего игрока
         Player current_player;
 
-        // Предварительное проигрывание ходов записанных в Json
-        String decision = "";
-        Scanner sc = new Scanner(System.in);
+        gameView.displayMessage("\nДобро пожаловать в игру крестики-нолики!!!.\n\n");
 
-        gameModel.setMatrix(gameModel.makeNamberMatrix());
-
-        while(!decision.equals("x")&& !decision.equals("j") && !decision.equals("n")){
-            gameView.displayMessage("\nВы бы хотели воспроизвести последнюю игру из XML или Json?\n");
-            gameView.displayMessage("\"x\" - воспроизведение из XML\n");
-            gameView.displayMessage("\"j\" воспроизведение из Json\n");
-            gameView.displayMessage("\"n\" - не воспроизводить\n");
-            gameView.displayMessage("Введите букву: ");
-            decision = sc.nextLine().toLowerCase();
-            gameView.displayMessage("\n");
-            if (!decision.equals("x")&& !decision.equals("j") && !decision.equals("n")) {
-                gameView.displayMessage("Вы ввели некорректное значение!\n");
-            }
-        }
-        // Выбор источника для воспроизведения
-        if(decision.equals("x")) {
-            ParsWriteFile parsWriteFile = new ParsWriteXml();
-            gameModel.playLastGame(parsWriteFile, pathXML);
-        }
-        else if (decision.equals("j")) {
-            ParsWriteFile parsWriteFile = new ParsWriteJson();
-            gameModel.playLastGame(parsWriteFile, pathJson);
-        }
-
+        // Выбор режима игры
         int mode = gameModel.modeInput();
-
+        // Инициализируем матрицу
         gameModel.setMatrix(gameModel.makeMatrix());
         // Список игроков с случайно выбранным первым игроком
         List<Player> players = gameModel.chooseFirst((ArrayList<Player>) gameModel.gameInit(mode));
@@ -115,13 +90,13 @@ public class GameController {
 
             // Проверка завершена ли игра
             if (gameModel.checkGameFinish(current_player)) {
-                ScoreFile scoreFile = new ScoreFile(path, current_player.getPlayerName());
+                ScoreFile scoreFile = new ScoreFile(path);
                 // Отображаем матрицу на экране
                 gameView.displayBoard(gameModel.getMatrix());
                 // Если не ничья
                 if (!gameModel.fullBoardCheck(gameModel.getMatrix())) {
                     // Пишем рейтинг выигравшего игрока в score.txt
-                    scoreFile.addScore();
+                    scoreFile.addScore(current_player.getPlayerName());
                     // Добавляем данные в gameplay и пишем в XML и JSON
                     gameplay.setGame(new Game(steps));
                     gameplay.setGameResult(new GameResult(current_player));
@@ -145,6 +120,7 @@ public class GameController {
 
                     // Показываем рейтин на экране
                     scoreFile.showScore();
+                    gameView.displayMessage("\nВыход из игры...");
                     break;
 
                 } else {
@@ -158,7 +134,7 @@ public class GameController {
                     // выбираем режим игры заново
                     mode = gameModel.modeInput();
 
-                    // Получаем заново список игроков с случайно выбранным первым игроком
+                    // Список игроков с случайно выбранным первым игроком
                     players = gameModel.chooseFirst((ArrayList<Player>) gameModel.gameInit(mode));
 
                     // Игрок который будет начинать игру

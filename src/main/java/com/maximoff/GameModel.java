@@ -13,6 +13,10 @@ import java.util.*;
 
 public class GameModel {
 
+    final String path = "src/main/resources/score.txt";
+    final String pathJson = "src/main/resources/gameplay.json";
+    final String pathXML = "src/main/resources/gameplay.xml";
+
     private final GameView gameView;
 
     private static String[][] matrix = null;
@@ -64,28 +68,76 @@ public class GameModel {
     }
 
     // Выбор режима игры
-    public int modeInput() throws IOException{
+    public int modeInput() throws Exception {
 
         BufferedReader b = new BufferedReader(
                 new InputStreamReader(System.in));
         String mode = "";
 
-        while (!mode.equals("1") && !mode.equals("2")) {
-            gameView.displayMessage("Задайте режим игры.\n");
-            gameView.displayMessage("Игра с человеком. Введите - 1.\n");
-            gameView.displayMessage("Игра с ботом. Введите - 2.\n");
-            gameView.displayMessage("Введите число: ");
-            mode = b.readLine().toUpperCase();
-            if (!mode.equals("1") && !mode.equals("2")) {
-                gameView.displayMessage("Вы ввели некорректное значение!\n");
+
+        while(true){
+
+            while (!mode.equals("1") && !mode.equals("2") && !mode.equals("3") && !mode.equals("4")) {
+                gameView.displayMessage("Задайте режим игры.\n\n");
+                gameView.displayMessage("Игра с человеком.          ->  Введите - 1.\n");
+                gameView.displayMessage("Игра с ботом.              ->  Введите - 2.\n");
+                gameView.displayMessage("Показать последнюю игру \n");
+                gameView.displayMessage("на экране из XML или Json  ->  Введите - 3.\n");
+                gameView.displayMessage("Выйти из игры              ->  Введите - 4.\n");
+                gameView.displayMessage("\nВведите число: ");
+                mode = b.readLine().toUpperCase();
+                if (!mode.equals("1") && !mode.equals("2") && !mode.equals("3") && !mode.equals("4")) {
+                    gameView.displayMessage("Вы ввели некорректное значение!\n");
+                }
             }
+
+            if (mode.equals("1") || mode.equals("2")) {
+                break;
+            }
+
+
+            if (mode.equals("3")) {
+                String decision = "";
+
+                while(!decision.equals("x")&& !decision.equals("j")){
+                    gameView.displayMessage("\nВыберите источник:\n");
+                    gameView.displayMessage("Воспроизведение из XML  -> Введите - x\n");
+                    gameView.displayMessage("Воспроизведение из Json -> Введите - j\n");
+
+                    gameView.displayMessage("Введите букву: ");
+                    decision = b.readLine().toLowerCase();
+                    gameView.displayMessage("\n");
+                    if (!decision.equals("x")&& !decision.equals("j")) {
+                        gameView.displayMessage("Вы ввели некорректное значение!\n");
+                    }
+                }
+                // Выбор источника для воспроизведения
+                if(decision.equals("x")) {
+                    ParsWriteFile parsWriteFile = new ParsWriteXml();
+                    this.playLastGame(parsWriteFile, pathXML);
+                }
+                else if (decision.equals("j")) {
+                    ParsWriteFile parsWriteFile = new ParsWriteJson();
+                    this.playLastGame(parsWriteFile, pathJson);
+                }
+                mode = "";
+            }
+
+            if (mode.equals("4")) {
+                // Показываем рейтин на экране
+                ScoreFile scoreFile = new ScoreFile(path);
+                scoreFile.showScore();
+                gameView.displayMessage("\nВыход из игры...");
+                System.exit(0); // Выход из игры
+            }
+
         }
 
         return Integer.parseInt(mode);
     }
 
     // Инициализация игры (определение имен игроков и их маркеров)
-    public List<Player> gameInit(int mode) throws IOException {
+    public List<Player> gameInit(int mode) throws Exception {
 
         // Имена игроков
         String player_name1 = "";
@@ -95,55 +147,57 @@ public class GameModel {
         BufferedReader in = new BufferedReader(
                 new InputStreamReader(System.in));
 
-        // Игра с человеком
-        if(mode==1) {
 
-            // Ввод имени первого игрока
-            while(player_name1.equals("")){
-                gameView.displayMessage("Введите имя первого игрока: ");
-                player_name1 = in.readLine();
-                if(player_name1.equals("Bot")) {
-                    gameView.displayMessage("Вы не можете использовать имя Bot!\n");
-                    player_name1 = "";
+        switch (mode) {
+            // Игра с человеком
+            case 1: {
+                // Ввод имени первого игрока
+                while(player_name1.equals("")){
+                    gameView.displayMessage("\nВведите имя первого игрока: ");
+                    player_name1 = in.readLine();
+                    if(player_name1.equals("Bot")) {
+                        gameView.displayMessage("Вы не можете использовать имя Bot!\n");
+                        player_name1 = "";
+                    }
+                }
+
+                // Выбор маркера игроков
+                player_marks = this.playerMarks();
+
+                // Ввод имени второго игрока
+                while(player_name2.equals("")){
+                    gameView.displayMessage("Введите имя второго игрока: ");
+                    player_name2 = in.readLine();
+                    if(player_name2.equals("Bot")) {
+                        gameView.displayMessage("Вы не можете использовать имя Bot!\n");
+                        player_name2 = "";
+                    }
+                    else if (player_name2.equals(player_name1)) {
+                        gameView.displayMessage("Одинаковые имена недопустимы!\n");
+                        player_name2 = "";
+                    }
                 }
             }
-
-            // Выбор маркера игроков
-            player_marks = this.playerMarks();
-
-            // Ввод имени второго игрока
-            while(player_name2.equals("")){
-                gameView.displayMessage("Введите имя второго игрока: ");
-                player_name2 = in.readLine();
-                if(player_name2.equals("Bot")) {
-                    gameView.displayMessage("Вы не можете использовать имя Bot!\n");
-                    player_name2 = "";
+                break;
+            // Игра с ботом
+            case 2: {
+                // Ввод имени первого игрока
+                while(player_name1.equals("")){
+                    gameView.displayMessage("\nВведите имя первого игрока: ");
+                    player_name1 = in.readLine();
+                    if(player_name1.equals("Bot")) {
+                        gameView.displayMessage("Вы не можете использовать имя Bot!\n");
+                        player_name1 = "";
+                    }
                 }
-                else if (player_name2.equals(player_name1)) {
-                    gameView.displayMessage("Одинаковые имена недопустимы!\n");
-                    player_name2 = "";
-                }
+                // Выбор маркера игроков
+                player_marks = this.playerMarks();
+                // Присвоение имени бота
+                player_name2 = "Bot";
             }
-
-        }
-        // Игра с ботом
-        else if(mode==2) {
-
-            // Ввод имени первого игрока
-            while(player_name1.equals("")){
-                gameView.displayMessage("Введите имя первого игрока: ");
-                player_name1 = in.readLine();
-                if(player_name1.equals("Bot")) {
-                    gameView.displayMessage("Вы не можете использовать имя Bot!\n");
-                    player_name1 = "";
-                }
-            }
-
-            // Выбор маркера игроков
-            player_marks = this.playerMarks();
-
-            // Присвоение имени бота
-            player_name2 = "Bot";
+                break;
+            default:
+                break;
         }
 
         Player player1 = new Player(1, player_name1, player_marks[0]);
@@ -343,6 +397,9 @@ public class GameModel {
 
         try {
 
+            // Создаем пронумерованное поле игры
+            this.setMatrix(this.makeNamberMatrix());
+
             Gameplay gameplay = parsWriteFile.parsFile(path);
 
             List<Player> players = gameplay.getPlayers();
@@ -357,7 +414,6 @@ public class GameModel {
             gameView.displayMessage("Player " + players.get(1).getPlayerID() + " -> "
                     + players.get(1).getPlayerName() + " is Player2 as \'"
                     + players.get(1).getPlayerMark() + "\'!\n\n");
-
 
             for (Step step : steps) {
                 gameView.displayBoard(this.getMatrix());
@@ -388,6 +444,9 @@ public class GameModel {
                         + winner.getPlayerName() + " is winner as "
                         + "\'" + winner.getPlayerMark() + "\'!\n\n");
             }
+
+            // Инициализируем матрицу
+            this.setMatrix(this.makeMatrix());
 
         } catch (NullPointerException e) {
             System.out.println("Ошибка! Нет данных\n");

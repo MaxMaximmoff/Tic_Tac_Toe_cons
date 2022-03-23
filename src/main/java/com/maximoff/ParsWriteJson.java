@@ -42,13 +42,13 @@ public class ParsWriteJson implements ParsWriteFile{
 
         Json json = new Json(gameplay);
 
-        // Записываем json
+        // Создаем printer
         DefaultPrettyPrinter printer = new DefaultPrettyPrinter();
         // Задаем отступ
         DefaultPrettyPrinter.Indenter indenter = new DefaultIndenter("    ", DefaultIndenter.SYS_LF);
         printer.indentObjectsWith(indenter); // Отступ для объектов в JSON
         printer.indentArraysWith(indenter);  // Отступ для массивов в JSON
-
+        // Записываем json
         ObjectMapper mapper = new ObjectMapper();
         mapper.writer(printer).writeValue(new FileOutputStream(path), json);
 

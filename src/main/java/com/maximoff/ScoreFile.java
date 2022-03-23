@@ -13,13 +13,11 @@ public class ScoreFile {
     private final GameView gameView;
     private static File scoreFile;
     private String path;
-    private String name;
 
     //  конструктор для класса ScoreFile
-    public ScoreFile(String path, String name) throws IOException, NullPointerException {
+    public ScoreFile(String path) throws IOException, NullPointerException {
 
         this.path = path;
-        this.name = name;
 
         SingletonGV singletonGV = new SingletonGV();
         this.gameView = singletonGV.getInstance();
@@ -42,7 +40,7 @@ public class ScoreFile {
     }
 
     // пишем в счет файл
-    public void addScore() {
+    public void addScore(String name) {
         BufferedWriter bw = null;
         BufferedReader reader = null;
         HashMap<String, Integer> scores;
@@ -135,7 +133,7 @@ public class ScoreFile {
                                                                         (e1, e2) -> e1,
                                                                         LinkedHashMap::new));
             //  Выводим на экран отсортированный рейтинг и записываем его обратно в файл
-            gameView.displayMessage("Рейтинг игроков:\n");
+            gameView.displayMessage("\nРейтинг игроков:\n");
             for(Map.Entry entry : sortedMapDesc.entrySet()) {
                     cache += entry.getKey() + " " + entry.getValue() + "\n";
                     gameView.displayMessage(entry.getKey() + " " + entry.getValue() + "\n");
