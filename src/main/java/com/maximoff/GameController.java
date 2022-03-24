@@ -28,7 +28,7 @@ public class GameController {
         // Переменная текущего игрока
         Player current_player;
 
-        gameView.displayMessage("\nДобро пожаловать в игру крестики-нолики!!!.\n\n");
+        gameView.displayMessage("\nДобро пожаловать в игру крестики-нолики!!!\n\n");
 
         // Выбор режима игры
         int mode = gameModel.modeInput();
@@ -105,6 +105,10 @@ public class GameController {
                     parsWriteFile = new ParsWriteJson();
                     parsWriteFile.writeFile(pathJson, gameplay);
 
+                    gameView.displayMessage("\n\tPlayer " + current_player.getPlayerID() + " -> "
+                            + current_player.getPlayerName() + " is winner as "
+                            + "\'" + current_player.getPlayerMark() + "\'!\n\n");
+
                 } else {
                     // Добавляем данные в gameplay и пишем в XML и JSON
                     gameplay.setGame(new Game(steps));
@@ -113,39 +117,30 @@ public class GameController {
                     parsWriteFile.writeFile(pathXML, gameplay);
                     parsWriteFile = new ParsWriteJson();
                     parsWriteFile.writeFile(pathJson, gameplay);
+
+                    gameView.displayMessage("\n\tDraw! - Ничья!\n\n");
                 }
 
-                // Выбор закончить игру или начать снова
-                if (!gameModel.replay()) {
+                // инициализируем num
+                num = 1;
 
-                    // Показываем рейтин на экране
-                    scoreFile.showScore();
-                    gameView.displayMessage("\nВыход из игры...");
-                    break;
+                // Инициализируем матрицу
+                gameModel.setMatrix(gameModel.makeMatrix());
 
-                } else {
+                // выбираем режим игры заново
+                mode = gameModel.modeInput();
 
-                    // инициализируем num
-                    num = 1;
+                // Список игроков с случайно выбранным первым игроком
+                players = gameModel.chooseFirst((ArrayList<Player>) gameModel.gameInit(mode));
 
-                    // Инициализируем матрицу
-                    gameModel.setMatrix(gameModel.makeMatrix());
+                // Игрок который будет начинать игру
+                current_player = players.get(0);
 
-                    // выбираем режим игры заново
-                    mode = gameModel.modeInput();
-
-                    // Список игроков с случайно выбранным первым игроком
-                    players = gameModel.chooseFirst((ArrayList<Player>) gameModel.gameInit(mode));
-
-                    // Игрок который будет начинать игру
-                    current_player = players.get(0);
-
-                    // Начинаем подготовку данных для записи в XML и Json
-                    gameplay = new Gameplay();
-                    gameplay.setPlayer(players);
-                    steps = new ArrayList<>();
-                    continue;
-                }
+                // Начинаем подготовку данных для записи в XML и Json
+                gameplay = new Gameplay();
+                gameplay.setPlayer(players);
+                steps = new ArrayList<>();
+                continue;
 
             }
 

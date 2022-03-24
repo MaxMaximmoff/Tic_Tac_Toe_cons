@@ -3,12 +3,12 @@
         "Player" : [
             {
                 "id" : 1,
-                "name" : "Bot",
+                "name" : "q",
                 "symbol" : "X"
             },
             {
                 "id" : 2,
-                "name" : "q",
+                "name" : "Bot",
                 "symbol" : "O"
             }
         ],
@@ -17,40 +17,35 @@
                 {
                     "num" : 1,
                     "playerId" : 1,
-                    "text" : 2
+                    "text" : 1
                 },
                 {
                     "num" : 2,
                     "playerId" : 2,
-                    "text" : 1
+                    "text" : 7
                 },
                 {
                     "num" : 3,
                     "playerId" : 1,
-                    "text" : 8
+                    "text" : 5
                 },
                 {
                     "num" : 4,
                     "playerId" : 2,
-                    "text" : 5
+                    "text" : 6
                 },
                 {
                     "num" : 5,
                     "playerId" : 1,
-                    "text" : 7
-                },
-                {
-                    "num" : 6,
-                    "playerId" : 2,
                     "text" : 9
                 }
             ]
         },
         "GameResult" : {
             "Player" : {
-                "id" : 2,
+                "id" : 1,
                 "name" : "q",
-                "symbol" : "O"
+                "symbol" : "X"
             }
         }
     }
